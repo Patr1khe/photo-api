@@ -2,8 +2,8 @@ import { body } from 'express-validator'
 import { getUserByEmail } from '../services/user_service'
 
 export const createUserRules = [
-    body('first_name').trim().isString().bail().isLength({ min: 3 }),
-    body('last_name').trim().isString().bail().isLength({ min: 3 }),
+    body('first_name').isString().withMessage('Has to be a string').isLength({ min: 3 }).withMessage('Has to have atleast 3 chars long').trim().bail(),
+    body('last_name').isString().withMessage('Has to be a string').bail().isLength({ min: 3 }).withMessage('Has to have atleast 3 chars long').trim().bail(),
 	body('email').normalizeEmail().isEmail().withMessage('Invaild email!').custom(async (value: string) => {
 		// check if a User with that email already exists
 		const user = await getUserByEmail(value)
@@ -17,12 +17,12 @@ export const createUserRules = [
 ]
 
 export const loginUserRules = [
-    body('email').isEmail().custom(async (value: string) => {
+    body('email').normalizeEmail().isEmail().custom(async (value: string) => {
         const user = await getUserByEmail(value)
 
         if (user) {
             return Promise.reject("Email already exists")
         }
     }),
-    body('password').isString().bail().isLength({ min: 6 }).withMessage('need atleast be 6 chars long').bail(),
+    body('password').isString().withMessage('Has to be a string').trim().bail().isLength({ min: 6 }).withMessage('You need atleast be 6 chars long').bail(),
 ]
