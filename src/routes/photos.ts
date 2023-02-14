@@ -11,9 +11,9 @@ const router = express.Router()
 router.get('/', index)
 
 /**
- * GET /orders/:orderId
+ * GET /photos/:photoId
  */
-router.get('/:orderId', show)
+router.get('/:photoId', show)
 
 
 /**
