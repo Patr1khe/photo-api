@@ -11,8 +11,8 @@ model Album {
   id     Int     @id @default(autoincrement()) @db.UnsignedInt
   title  String
   photos Photo[]
-  User   User?   @relation(fields: [userId], references: [id])
-  userId Int?    @db.UnsignedInt
+  User   User    @relation(fields: [userId], references: [id])
+  userId Int     @db.UnsignedInt
 }
 
 model Photo {
@@ -21,8 +21,8 @@ model Photo {
   url     String
   comment String? @default("null")
   albums  Album[]
-  User    User?   @relation(fields: [userId], references: [id])
-  userId  Int?    @db.UnsignedInt
+  User    User    @relation(fields: [userId], references: [id])
+  userId  Int     @db.UnsignedInt
 }
 
 model User {
