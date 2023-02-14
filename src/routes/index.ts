@@ -1,5 +1,4 @@
 import express from "express"
-import resource from './_router'
 import profile from './profile'
 import photos from './photos'
 import { register, refresh, login } from '../controllers/user_controller'
@@ -21,7 +20,7 @@ router.get('/', (req, res) => {
 /**
  * /photos
  */
-router.use('/photos', photos)
+router.use('/photos', validateToken, photos)
 
 
 

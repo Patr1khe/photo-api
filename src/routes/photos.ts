@@ -3,10 +3,11 @@ import { body, validationResult } from 'express-validator'
 import { Request, Response } from 'express'
 import { index, store, show } from '../controllers/photos_controller'
 import { prisma } from '@prisma/client'
+import { createPhotoRules } from '../validations/photo_rules'
 const router = express.Router()
 
 /**
- * GET /orders
+ * GET /photos
  */
 router.get('/', index)
 
@@ -17,11 +18,9 @@ router.get('/:photoId', show)
 
 
 /**
- * POST /orders
+ * POST /photos
  */
-router.post('/', [
-    
-], store)
+router.post('/', createPhotoRules, store)
 
 
 
