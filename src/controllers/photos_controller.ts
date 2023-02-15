@@ -85,3 +85,33 @@ export const store = async (req: Request, res: Response) => {
         return res.status(500).send({ status: "error", message: "Could not create photo in database"})
     }
 }
+
+/**
+ * Update existing photo
+ */
+export const updatePhotoId = async (req: Request, res: Response) => {
+    // check Errors for any validation
+    const validationFails = validationResult(req)
+    if (!validationFails.isEmpty()) {
+        return res.status(400).send({
+            status: "fail",
+            data: validationFails.array(),
+        })
+    }
+    const photoId = Number(req.params.photoId)
+
+    try {
+        const updateData = await prisma.photo.update({
+            where: {
+                id: photoId,
+            },
+            data: req.body
+        })
+        debug(updateData)
+        res.send({ status: "success", data: updateData})
+    } catch (err) {
+        debug(err)
+        return res.status(500).send({ status: "error", message: "Could not update photo in database"})
+    }
+
+}
