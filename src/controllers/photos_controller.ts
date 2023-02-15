@@ -87,7 +87,7 @@ export const store = async (req: Request, res: Response) => {
 }
 
 /**
- * Update existing photo
+ * Update a existing photo
  */
 export const updatePhotoId = async (req: Request, res: Response) => {
     // check Errors for any validation
@@ -113,5 +113,55 @@ export const updatePhotoId = async (req: Request, res: Response) => {
         debug(err)
         return res.status(500).send({ status: "error", message: "Could not update photo in database"})
     }
+}
 
+/**
+ * Delete a photo
+ */
+export const destroy = async (req: Request, res: Response) => {
+    // check Errors for any validation
+    const validationFails = validationResult(req)
+    if (!validationFails.isEmpty()) {
+        return res.status(400).send({
+            status: "fail",
+            data: validationFails.array(),
+        })
+    }
+
+    const photoId = Number(req.params.photoId)
+
+    // verify that the photo doesn't have any assoicated albums
+    try {
+        const photo = await prisma.photo.findUniqueOrThrow({
+            where: {
+                id: photoId,
+            },
+            include: {
+                _count: {
+                    select: {
+                        albums: true,
+                    },
+                },
+            },
+        })
+
+        if (photo._count.albums) {
+            return res.status(400).send({ status: "fail", message: "Photo has linked albums" })
+        }
+
+    } catch (err) {
+        return res.status(404).send({message:"not found"})
+    }
+
+    try {
+        const removePhoto = await prisma.photo.delete({
+            where: {
+                id: photoId
+            },
+        })
+        return res.status(200).send({status: "success", removePhoto})
+    } catch (err) {
+        debug(err)
+        return res.status(500).send({ status: "error", message: "Could not delete photo in database"})
+    }
 }
