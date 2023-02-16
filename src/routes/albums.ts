@@ -1,5 +1,5 @@
 import express from 'express'
-import { addPhoto, addPhotos, index, show, store, updateAlbumId } from '../controllers/albums_controller'
+import { addPhoto, addPhotos, destroy, index, show, store, updateAlbumId } from '../controllers/albums_controller'
 import { createAlbumRules } from '../validations/album_rules'
 
 const router = express.Router()
@@ -26,5 +26,10 @@ router.post('/:albumId/photos', addPhotos)
  * PATCH /albums/:albumId
  */
 router.patch('/:albumId', updateAlbumId)
+
+/**
+ * DELETE /albums/:albumId
+ */
+router.delete('/:albumId', destroy) 
 
 export default router
