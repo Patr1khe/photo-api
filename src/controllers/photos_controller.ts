@@ -106,6 +106,17 @@ export const updatePhotoId = async (req: Request, res: Response) => {
     const photoId = Number(req.params.photoId)
 
     try {
+        await prisma.photo.findFirstOrThrow({
+            where: {
+                id: photoId,
+                userId: req.token?.sub,
+            }
+        })
+    } catch (err) {
+        return res.status(404).send({ message: "not found" })
+    }
+
+    try {
         const updateData = await prisma.photo.update({
             where: {
                 id: photoId,
@@ -135,27 +146,15 @@ export const destroy = async (req: Request, res: Response) => {
 
     const photoId = Number(req.params.photoId)
 
-    // verify that the photo doesn't have any assoicated albums
     try {
-        const photo = await prisma.photo.findUniqueOrThrow({
+        await prisma.photo.findFirstOrThrow({
             where: {
                 id: photoId,
-            },
-            include: {
-                _count: {
-                    select: {
-                        albums: true,
-                    },
-                },
-            },
+                userId: req.token?.sub,
+            }
         })
-
-        if (photo._count.albums) {
-            return res.status(400).send({ status: "fail", message: "Photo has linked albums" })
-        }
-
     } catch (err) {
-        return res.status(404).send({message:"not found"})
+        return res.status(404).send({ message: "not found" })
     }
 
     try {
