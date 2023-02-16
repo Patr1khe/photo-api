@@ -19,7 +19,11 @@ export const index = async ( req: Request, res: Response) => {
 
 
     try {
-        const album = await prisma.album.findMany()
+        const album = await prisma.album.findMany({
+            where: {
+                userId: req.token?.sub,
+            }
+        })
         res.status(200).send({ status: "success", data: album})
     } catch (err) {
         res.status(500).send({ status: "Error", message: "Something went wrong, double check your server please!"})
@@ -41,9 +45,10 @@ export const show = async (req: Request, res: Response) => {
     const albumId = Number(req.params.albumId)
 
     try {
-        const album = await prisma.album.findUniqueOrThrow({
+        const album = await prisma.album.findFirstOrThrow({
             where: {
                 id: albumId,
+                userId: req.token?.sub,
             },
             include: {
                 photos: true,
@@ -79,7 +84,7 @@ export const store = async (req: Request, res: Response) => {
         const album = await prisma.album.create({
             data: {
                 title,
-                userId: req.token?.sub
+                userId: req.token!.sub
             },
         })
         debug(album)
@@ -122,10 +127,10 @@ export const addPhoto = async (req: Request, res: Response) => {
             }
         })
         debug(album)
-        res.status(201).send({ status: "success", data: album })
+        res.status(200).send({ status: "success", data: album })
     } catch (err) {
         debug(err)
-        return res.status(500).send({ status: "error", message: "Could not create album in database"})
+        return res.status(500).send({ status: "error", message: "Could not add a photo to an album in database"})
     }
 }
 
@@ -166,13 +171,39 @@ export const addPhotos = async (req: Request, res: Response) => {
             }
         })
         debug(album)
-        res.status(201).send({ status: "success", data: album })
+        res.status(200).send({ status: "success", data: null })
     } catch (err) {
         debug(err)
-        return res.status(500).send({ status: "error", message: "Could not create album in database"})
+        return res.status(500).send({ status: "error", message: "Could not add multiple photos to an album in database"})
     }
 }
 
+/**
+ * Remove a photo from an album (but not the photo itself!)
+ */
+export const removePhoto = async ( req: Request, res: Response) => {
+    const albumId = Number(req.params.albumId)
+
+    try {
+        const album = await prisma.album.update({
+            where: {
+                id: albumId,
+            },
+            data: {
+                photos: {
+                    disconnect: {
+                        id: Number(req.params.photoId)
+                    }
+                }
+            }
+        })
+        debug(album)
+        res.status(200).send({ status: "success", data: null })
+    } catch (err) {
+        debug(err)
+        return res.status(500).send({ status: "error", message: "Could not remove album in database"})
+    }
+}
 
 
 /**
