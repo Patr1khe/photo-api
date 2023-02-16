@@ -96,45 +96,6 @@ export const store = async (req: Request, res: Response) => {
 }
 
 /**
- * Add a photo to an album
- */
-export const addPhoto = async (req: Request, res: Response) => {
-    const validationFails = validationResult(req)
-    if (!validationFails.isEmpty()) {
-        return res.status(400).send({
-            status: "fail",
-            data: validationFails.array(),
-        })
-    }
- 
-    const albumId = Number(req.params.albumId)
-    debug(req.token)
-    
-    try {
-        const album = await prisma.album.update({
-            where: {
-                id: albumId,
-            },
-            data: {
-                photos: {
-                    connect: {
-                        id: req.body.photoId,
-                    }
-                }
-            },
-            include: {
-                photos: true,
-            }
-        })
-        debug(album)
-        res.status(200).send({ status: "success", data: album })
-    } catch (err) {
-        debug(err)
-        return res.status(500).send({ status: "error", message: "Could not add a photo to an album in database"})
-    }
-}
-
-/**
  * Add multiple photos to an album
  */
 export const addPhotos = async (req: Request, res: Response) => {
@@ -164,7 +125,7 @@ export const addPhotos = async (req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found" })
+        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
     }
     
     try {
@@ -203,7 +164,7 @@ export const removePhoto = async ( req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found" })
+        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
     }
 
     try {
@@ -251,7 +212,7 @@ export const updateAlbumId = async (req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found" })
+        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
     }
 
     try {
@@ -284,27 +245,15 @@ export const destroy = async (req: Request, res: Response) => {
 
     const albumId = Number(req.params.albumId)
 
-    // verify that the album doesn't have any assoicated photos
     try {
-        const album = await prisma.album.findUniqueOrThrow({
+        await prisma.album.findFirstOrThrow({
             where: {
                 id: albumId,
-            },
-            include: {
-                _count: {
-                    select: {
-                        photos: true,
-                    },
-                },
-            },
+                userId: req.token?.sub,
+            }
         })
-
-        if (album._count.photos) {
-            return res.status(400).send({ status: "fail", message: "Album has linked photos" })
-        }
-
     } catch (err) {
-        return res.status(404).send({message:"not found"})
+        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
     }
 
     try {

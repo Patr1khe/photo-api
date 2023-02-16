@@ -1,5 +1,5 @@
 import express from 'express'
-import { index, show, store, updateAlbumId, addPhoto, addPhotos,  removePhoto, destroy } from '../controllers/albums_controller'
+import { index, show, store, updateAlbumId, addPhotos,  removePhoto, destroy } from '../controllers/albums_controller'
 import { createAlbumRules } from '../validations/album_rules'
 
 const router = express.Router()
@@ -19,7 +19,6 @@ router.get('/:albumId', show)
  * POST /albums/:albumId/photos
  */
 router.post('/', createAlbumRules, store)
-router.post('/:albumId/photos', addPhoto)
 router.post('/:albumId/photos', addPhotos)
 
 /**
