@@ -155,6 +155,17 @@ export const addPhotos = async (req: Request, res: Response) => {
 
     const albumId = Number(req.params.albumId)
     debug(req.token)
+
+    try {
+        await prisma.album.findFirstOrThrow({
+            where: {
+                id: albumId,
+                userId: req.token?.sub,
+            }
+        })
+    } catch (err) {
+        return res.status(404).send({ message: "not found" })
+    }
     
     try {
         const album = await prisma.album.update({
@@ -183,6 +194,17 @@ export const addPhotos = async (req: Request, res: Response) => {
  */
 export const removePhoto = async ( req: Request, res: Response) => {
     const albumId = Number(req.params.albumId)
+
+    try {
+        await prisma.album.findFirstOrThrow({
+            where: {
+                id: albumId,
+                userId: req.token?.sub,
+            }
+        })
+    } catch (err) {
+        return res.status(404).send({ message: "not found" })
+    }
 
     try {
         const album = await prisma.album.update({
@@ -218,14 +240,26 @@ export const updateAlbumId = async (req: Request, res: Response) => {
             data: validationFails.array(),
         })
     }
+
     const albumId = Number(req.params.albumId)
+
+    try {
+        await prisma.album.findFirstOrThrow({
+            where: {
+                id: albumId,
+                userId: req.token?.sub,
+            }
+        })
+    } catch (err) {
+        return res.status(404).send({ message: "not found" })
+    }
 
     try {
         const album = await prisma.album.update({
             where: {
                 id: albumId,
             },
-            data: req.body
+            data: req.body,
         })
         debug(album)
         res.send({ status: "success", data: album})
