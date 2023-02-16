@@ -203,3 +203,54 @@ export const updateAlbumId = async (req: Request, res: Response) => {
         return res.status(500).send({ status: "error", message: "Could not update photo in database"})
     }
 }
+
+/**
+ * Delete an album inclusve the links to the photos, but not the photos themselves
+ */
+export const destroy = async (req: Request, res: Response) => {
+    // check Errors for any validation
+    const validationFails = validationResult(req)
+    if (!validationFails.isEmpty()) {
+        return res.status(400).send({
+            status: "fail",
+            data: validationFails.array(),
+        })
+    }
+
+    const albumId = Number(req.params.albumId)
+
+    // verify that the album doesn't have any assoicated photos
+    try {
+        const album = await prisma.album.findUniqueOrThrow({
+            where: {
+                id: albumId,
+            },
+            include: {
+                _count: {
+                    select: {
+                        photos: true,
+                    },
+                },
+            },
+        })
+
+        if (album._count.photos) {
+            return res.status(400).send({ status: "fail", message: "Album has linked photos" })
+        }
+
+    } catch (err) {
+        return res.status(404).send({message:"not found"})
+    }
+
+    try {
+        const deleteAlbum = await prisma.album.delete({
+            where: {
+                id: albumId
+            },
+        })
+        return res.status(200).send({status: "success", deleteAlbum})
+    } catch (err) {
+        debug(err)
+        return res.status(500).send({ status: "error", message: "Could not delete photo in database"})
+    }
+}
