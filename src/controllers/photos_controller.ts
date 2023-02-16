@@ -18,8 +18,12 @@ export const index = async ( req: Request, res: Response) => {
     }
     
     try {
-        const photos = await prisma.photo.findMany()
-        res.status(201).send({ status: "success", data: photos})
+        const photos = await prisma.photo.findMany({
+            where: {
+                userId: req.token?.sub,
+            }
+        })
+        res.status(200).send({ status: "success", data: photos})
     } catch (err) {
         res.status(500).send({ status: "Error", message: "Something went wrong, double check your server please!"})
     }
@@ -39,9 +43,10 @@ export const show = async (req: Request, res: Response) => {
     const photoId = Number(req.params.photoId)
 
     try {
-        const photo = await prisma.photo.findUniqueOrThrow({
+        const photo = await prisma.photo.findFirstOrThrow({
             where: {
                 id: photoId,
+                userId: req.token?.sub,
             }
         })
         res.status(200).send({
@@ -75,7 +80,7 @@ export const store = async (req: Request, res: Response) => {
                 title,
                 url,
                 comment,
-                userId: req.token?.sub
+                userId: req.token!.sub
             },
         })
         debug(photo)
@@ -108,7 +113,7 @@ export const updatePhotoId = async (req: Request, res: Response) => {
             data: req.body
         })
         debug(updateData)
-        res.send({ status: "success", data: updateData})
+        res.status(200).send({ status: "success", data: updateData})
     } catch (err) {
         debug(err)
         return res.status(500).send({ status: "error", message: "Could not update photo in database"})
