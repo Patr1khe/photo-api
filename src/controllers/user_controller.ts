@@ -17,6 +17,14 @@ import { debug } from 'console'
  * Login a user
  */
 export const login = async (req: Request, res: Response) => {
+	const validationErrors = validationResult(req)
+	if (!validationErrors.isEmpty()) {
+		return res.status(400).send({
+			status: "fail",
+			data: validationErrors.array(),
+		})
+	}
+	
 	// destructure email and password from request body
 	const {email, password} = req.body
 
@@ -25,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
 	if (!user) {
 		return res.status(401).send({
 			status: "fail",
-			message: "Authorization required",
+			message: "Authorization account required!",
 		})
 	}
 
@@ -34,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
 	if (!result) {
 		return res.status(401).send({
 			status: "fail",
-			message: "Authorization required",
+			message: "Authorization password is required",
 		})
 	}
 
