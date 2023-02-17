@@ -17,12 +17,12 @@ export const createUserRules = [
 ]
 
 export const loginUserRules = [
-    body('email').normalizeEmail().isEmail().custom(async (value: string) => {
+    body('email').isEmail().withMessage("It must to be an email!").normalizeEmail().custom(async (value: string) => {
         const user = await getUserByEmail(value)
 
         if (user) {
-            return Promise.reject("Email already exists")
+            return Promise.resolve("Email already exists")
         }
-    }),
+    }).not().isArray().bail(),
     body('password').isString().withMessage('Has to be a string').trim().bail().isLength({ min: 6 }).withMessage('You need atleast be 6 chars long').bail(),
 ]
