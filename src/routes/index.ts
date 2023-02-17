@@ -1,5 +1,4 @@
 import express from "express"
-import profile from './profile'
 import photos from './photos'
 import albums from './albums'
 import { register, refresh, login } from '../controllers/user_controller'
@@ -38,11 +37,6 @@ router.use('/login', loginUserRules, login)
  * POST /refresh
  */
 router.post('/refresh', refresh)
-
-/**
- * /profile
- */
-router.use('/profile', validateToken, profile)
 
 /**
  * /register
