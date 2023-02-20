@@ -125,7 +125,7 @@ export const addPhotos = async (req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
+        return res.status(401).send({ message: "not found, this is not your ACCOUNT, Account is unauthorized!" })
     }
     
     try {
@@ -164,7 +164,7 @@ export const removePhoto = async ( req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
+        return res.status(401).send({ message: "not found, this is not your ACCOUNT!" })
     }
 
     try {
@@ -212,7 +212,7 @@ export const updateAlbumId = async (req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
+        return res.status(401).send({ message: "not found, this is not your ACCOUNT, Account is unauthorized!" })
     }
 
     try {
@@ -253,7 +253,7 @@ export const destroy = async (req: Request, res: Response) => {
             }
         })
     } catch (err) {
-        return res.status(404).send({ message: "not found, this is not your ACCOUNT!" })
+        return res.status(401).send({ message: "not found, this is not your ACCOUNT, Account is unauthorized!"})
     }
 
     try {
