@@ -10,5 +10,5 @@ export const updatingAlbumRules = [
 
 export const addPhotoRules = [
     body('photoIds').isArray().notEmpty(),
-    body('photoIds.*').isInt().withMessage('Has to be integer').not().isString().not().isArray(),
+    body('photoIds.*').isInt().withMessage('Has to be integer').not().isString().withMessage('Can not have string').not().isArray().bail(),
 ]
