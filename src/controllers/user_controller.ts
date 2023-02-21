@@ -103,11 +103,11 @@ export const register = async (req: Request, res: Response) => {
 
 	// Get only the validated data from the request
 	const validatedData = matchedData(req)
-	console.log("validatedData:", validatedData)
+	
 
 	// Calculate a hash + salt for the password
 	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
-	console.log("Hashed password:", hashedPassword)
+	
 
 	// Replace password with hashed password
 	validatedData.password = hashedPassword
