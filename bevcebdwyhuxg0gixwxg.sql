@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: bevcebdwyhuxg0gixwxg-mysql.services.clever-cloud.com:3306
--- Generation Time: Feb 21, 2023 at 11:10 AM
+-- Generation Time: Feb 21, 2023 at 06:33 PM
 -- Server version: 8.0.22-13
 -- PHP Version: 7.2.34
 
@@ -47,7 +47,8 @@ INSERT INTO `Album` (`id`, `title`, `userId`) VALUES
 (6, 'Try to delete me pls pls', 2),
 (7, 'Try to delete test me', 2),
 (9, 'Be open', 1),
-(10, 'Welcome', 1);
+(10, 'Welcome', 1),
+(13, 'OhBoy oh oh no', 2);
 
 -- --------------------------------------------------------
 
@@ -125,6 +126,7 @@ INSERT INTO `_AlbumToPhoto` (`A`, `B`) VALUES
 (5, 5),
 (5, 6),
 (7, 8),
+(13, 8),
 (10, 12);
 
 -- --------------------------------------------------------
@@ -197,7 +199,7 @@ ALTER TABLE `_prisma_migrations`
 -- AUTO_INCREMENT for table `Album`
 --
 ALTER TABLE `Album`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `Photo`
