@@ -2,16 +2,14 @@
  * User Controller
  */
 import bcrypt from 'bcrypt'
-// import  Debug  from 'debug'
+import  Debug  from 'debug'
 import { Request, Response } from 'express'
 import {  matchedData, validationResult, } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { JwtPayload } from '../types'
-import prisma from '../prisma'
 import { createUser, getUserByEmail } from './../services/user_service'
-import { debug } from 'console'
 
-// const debug = Debug('prisma-photo-api:user_controller')
+const debug = Debug('prisma-photo-api:user_controller')
 
 /**
  * Login a user
@@ -73,10 +71,10 @@ export const login = async (req: Request, res: Response) => {
 			message: "No refresh token secret defined",
 		})
 	}
+
 	const refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
 		expiresIn: process.env.REFRESH_TOKEN_LIFETIME || '1d',
 	})
-
 
 	// respond with access-token
 	res.send({
@@ -104,14 +102,11 @@ export const register = async (req: Request, res: Response) => {
 	// Get only the validated data from the request
 	const validatedData = matchedData(req)
 	
-
 	// Calculate a hash + salt for the password
 	const hashedPassword = await bcrypt.hash(validatedData.password, Number(process.env.SALT_ROUNDS) || 10)
 	
-
 	// Replace password with hashed password
 	validatedData.password = hashedPassword
-
 
 	// Store the user in the database
 	try {
@@ -204,5 +199,4 @@ export const refresh = (req: Request, res: Response) => {
 			data: "Authorization required",
 		})
 	}
-
 }
