@@ -1,5 +1,4 @@
 import Debug from 'debug'
-// import { debug } from 'console'
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import prisma from '../prisma'

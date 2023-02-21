@@ -1,4 +1,3 @@
-// import { debug } from 'console'
 import Debug from 'debug'
 import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
